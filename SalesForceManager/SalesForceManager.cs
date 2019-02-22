@@ -113,14 +113,17 @@ namespace Siemplify
                 }
             }
 
-            //string oppFields = GetObjectFields("Opportunity");
+            void FillHistory(Opportunity oppObj)
+            {
+                // TODO: combine oppHistory and opportunity object
+            }
 
             const string fieldsToObtain = "Id, Name, StageName, CreatedDate, OwnerId, CreatedById";
             var opportunities = GetObjectsByName("Opportunity", fieldsToObtain);            
-            var oppHistory = Query<dynamic>("SELECT Id, (SELECT OpportunityId, CreatedDate, StageName FROM OpportunityHistories) FROM Opportunity");
+            dynamic oppHistory = Query<dynamic>("SELECT Id, (SELECT OpportunityId, CreatedDate, StageName FROM OpportunityHistories) FROM Opportunity");
 
 
-            List<Opportunity> result = new List<Opportunity>();
+            List<Opportunity> result = new List<Opportunity>();            
 
             foreach (var opp in opportunities)
             {
@@ -138,7 +141,7 @@ namespace Siemplify
 
                 OpportunityStageHistory history = new OpportunityStageHistory();
 
-                // TODO: combine oppHistory and opportunities
+                FillHistory(resultOppObj);
 
                 result.Add(resultOppObj);
             }

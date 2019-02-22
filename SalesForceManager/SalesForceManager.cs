@@ -3,6 +3,7 @@ using SalesforceSharp;
 using SalesforceSharp.Security;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Runtime.CompilerServices;
@@ -69,13 +70,6 @@ namespace Siemplify
             }            
         }
 
-        public class Account
-        {
-            public string Id { get; set; }
-            public string Name { get; set; }
-            public string Description { get; set; }
-        }
-
 
         public IList<dynamic> GetObjectsByName(string objectName, string fields = "")
         {
@@ -100,6 +94,54 @@ namespace Siemplify
 
             var fieldNames = sobjDetails.Fields.ConvertAll<string>(f => f.Name);
             string result = string.Join(", ", fieldNames);
+
+            return result;
+        }
+
+        public List<Opportunity> GetOpportunitiesWithHistory()
+        {
+            //string historyFields = GetObjectFields("OpportunityHistory");   
+            DateTime? SafeParse(string str)
+            {
+                try
+                {
+                    return DateTime.Parse(str, CultureInfo.InvariantCulture);
+                }
+                catch
+                {
+                    return null;
+                }
+            }
+
+            //string oppFields = GetObjectFields("Opportunity");
+
+            const string fieldsToObtain = "Id, Name, StageName, CreatedDate, OwnerId, CreatedById";
+            var opportunities = GetObjectsByName("Opportunity", fieldsToObtain);            
+            var oppHistory = Query<dynamic>("SELECT Id, (SELECT OpportunityId, CreatedDate, StageName FROM OpportunityHistories) FROM Opportunity");
+
+
+            List<Opportunity> result = new List<Opportunity>();
+
+            foreach (var opp in opportunities)
+            {
+                var resultOppObj = new Opportunity()
+                {
+                    Id = opp.Id,
+                    Name = opp.Name,
+                    Stage = opp.StageName,
+                    BillingCountry = null,              // TODO: NO data
+                    CreatedDate = SafeParse((string)opp.CreatedDate),
+                    Owner = opp.OwnerId,
+                    FYCV = 0,                           // TODO: NO data?
+                    CreatedBy = opp.CreatedById,
+                };
+
+                OpportunityStageHistory history = new OpportunityStageHistory();
+
+                // TODO: combine oppHistory and opportunities
+
+                result.Add(resultOppObj);
+            }
 
             return result;
         }

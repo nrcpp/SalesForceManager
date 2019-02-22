@@ -21,16 +21,18 @@ namespace Siemplify
         {
             
 #if DEBUG
-            // for testing purposes, "token.txt" have to be in .gitignore
+            // for testing purposes,  have to be in .gitignore
             if (File.Exists("oauth_data.txt"))
                 InitFromFile("oauth_data.txt");                
 #endif
 
             var forceManager = new SalesForceManager(consumerKey, consumerSecret, salesforceLogin, salesforcePassword);
 
-            // Enable TLS 1.2 as a main protocol for SalesForce. Otherwise API won't work.
-            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+            // Enable TLS 1.2 as a main protocol for SalesForce. 
+            System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             forceManager.Connect();
+
+#if UNCOMMENT_TO_TEST_FETCH_OBJECTS
             var accounts = forceManager.GetObjectsByName("Account");
 
             Console.WriteLine("First 10 Accounts:");
@@ -40,7 +42,8 @@ namespace Siemplify
             var contacts = forceManager.GetObjectsByName("Contact");
             foreach (var c in contacts.Take(10))
                 Console.WriteLine($"Id: {c.Id} - Name: {c.Name} - Title: {c.Title} - Phone: {c.Phone} - Email: {c.Email}");
-
+#endif
+            forceManager.GetOpportunitiesWithHistory();
         }
 
         private static void InitFromFile(string fileName)

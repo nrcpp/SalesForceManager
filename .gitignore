@@ -329,3 +329,4 @@ ASALocalRun/
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
 SalesForceManager/token.txt
+SalesForceManager/oauth_data.txt

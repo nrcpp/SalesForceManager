@@ -129,7 +129,16 @@ namespace SalesforceSharp.Security
             }
             else
             {
-                throw new SalesforceException(responseData.error.Value, responseData.error_description.Value);
+                string error = $"Error ({response.StatusCode.ToString()}): ";
+                if (response.ErrorMessage != null) error += response.ErrorMessage + "\t\r\n";
+                if (response.ErrorException != null) error += response.ErrorException.Message + "\t\r\n";
+                if (responseData != null)
+                {
+                    if (responseData.error?.Value != null) error += responseData.error.Value + "\t\r\n";
+                    if (responseData.error_description?.Value != null) error += responseData.error_description.Value + "\t\r\n";
+                }
+
+                throw new SalesforceException(error, "");
             }            
         }
         #endregion

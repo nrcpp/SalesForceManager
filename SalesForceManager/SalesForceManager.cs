@@ -68,5 +68,40 @@ namespace Siemplify
                 Log($"Authentication failed: {ex.Error}");
             }            
         }
+
+        public class Account
+        {
+            public string Id { get; set; }
+            public string Name { get; set; }
+            public string Description { get; set; }
+        }
+
+
+        public IList<dynamic> GetObjectsByName(string objectName, string fields = "")
+        {
+            if (string.IsNullOrWhiteSpace(fields))
+                fields = GetObjectFields(objectName);
+
+            var records = base.Query<dynamic>($"SELECT {fields} FROM {objectName}");        // "SELECT id, name, description FROM Account"
+
+            Log($"{records.Count} records fetched from [{objectName}]");
+            return records;
+        }
+
+
+        public string GetObjectFields(string objectName)
+        {
+            var sobjDetails = base.GetSObjectDetail(objectName);
+            if (sobjDetails == null)
+            {
+                Log("Error");
+                return "";
+            }
+
+            var fieldNames = sobjDetails.Fields.ConvertAll<string>(f => f.Name);
+            string result = string.Join(", ", fieldNames);
+
+            return result;
+        }
     }
 }

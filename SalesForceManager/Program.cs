@@ -26,11 +26,21 @@ namespace Siemplify
                 InitFromFile("oauth_data.txt");                
 #endif
 
-            var salesForceManager = new SalesForceManager(consumerKey, consumerSecret, salesforceLogin, salesforcePassword);
+            var forceManager = new SalesForceManager(consumerKey, consumerSecret, salesforceLogin, salesforcePassword);
 
             // Enable TLS 1.2 as a main protocol for SalesForce. Otherwise API won't work.
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
-            salesForceManager.Connect();
+            forceManager.Connect();
+            var accounts = forceManager.GetObjectsByName("Account");
+
+            Console.WriteLine("First 10 Accounts:");
+            foreach (var a in accounts.Take(10))            
+                Console.WriteLine($"Id: {a.Id} - Name: {a.Name} - Description: {a.Description}");
+
+            var contacts = forceManager.GetObjectsByName("Contact");
+            foreach (var c in contacts.Take(10))
+                Console.WriteLine($"Id: {c.Id} - Name: {c.Name} - Title: {c.Title} - Phone: {c.Phone} - Email: {c.Email}");
+
         }
 
         private static void InitFromFile(string fileName)

@@ -1,10 +1,10 @@
 # SalesForceManager
 
 **SalesForceManager class currently those core methods:**
-*Connect()* - connects to SalesForce API using clientId/clientKey and SF credentials
-*GetObjectsByName(string objectName, string fields = "")* - return any SF object with dynamic access, like Account, Contact or Lead. You could specify second parameter to fetch only specified fields.
-*GetObjectFields(string objectName)* - returns all object field names, including custom fields. 
-*GetOpportunitiesWithHistory()* - returns all Opportunity objects and their field history.
+- *Connect()* - connects to SalesForce API using clientId/clientKey and SF credentials
+- *GetObjectsByName(string objectName, string fields = "")* - return any SF object with dynamic access, like Account, Contact or Lead. You could specify second parameter to fetch only specified fields.
+- *GetObjectFields(string objectName)* - returns all object field names, including custom fields. 
+- *GetOpportunitiesWithHistory()* - returns all Opportunity objects and their field history.
 
 See *Program.cs* for example of usage of those methods.
 
@@ -16,7 +16,7 @@ Make sure that after app creation you setup all security parameters as described
 
 **Notes:**
 - SalesForceManager class build on top of SalesForceSharp project. It derived from SalesForceSharp.SalesForceClient class which contains basic methods to manage data on SalesForce:
-Such as Query() - will send an SOQL query to SalesForce endpoint (will work like an SQL queries with some differences). See SalesForceSharp docs for more info.
+Such as *Query()* - will send an SOQL query to SalesForce endpoint (will work like an SQL queries with some differences). See SalesForceSharp docs for more info. https://github.com/giacomelli/SalesforceSharp
 - SalesForceManager uses NewtonSoft.Json 7.0.1 and RestSharp 105.0.1 as a dependencies. Those one dpeendencies of SalesForceSharp as well. 
 It is compatible with .NET 4.0 and later.
 - There is a limits for 15000 requests per 24 hour for SalesForce API. For paid plans there are larger limits. Check https://developer.salesforce.com/docs/atlas.en-us.218.0.api.meta/api/implementation_considerations.htm?SearchType=Stem

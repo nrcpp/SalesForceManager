@@ -1,6 +1,6 @@
 # SalesForceManager
 
-**SalesForceManager class currently those core methods:**
+**SalesForceManager class currently contains such core methods:**
 - *Connect()* - connects to SalesForce API using clientId/clientKey and SF credentials
 - *GetObjectsByName(string objectName, string fields = "")* - return any SF object with dynamic access, like Account, Contact or Lead. You could specify second parameter to fetch only specified fields.
 - *GetObjectFields(string objectName)* - returns all object field names, including custom fields. 

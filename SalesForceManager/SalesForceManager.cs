@@ -1,4 +1,5 @@
 ﻿using RestSharp;
+using SalesForceManager.Models;
 using SalesforceSharp;
 using SalesforceSharp.Security;
 using System;
@@ -113,14 +114,26 @@ namespace Siemplify
                 }
             }
 
-            void FillHistory(Opportunity oppObj)
+            void FillHistory(Opportunity oppObj, IList<OpportunityHistoriesClass> rootObjects)
             {
-                // TODO: combine oppHistory and opportunity object
+                oppObj.StagesHistory = new List<OpportunityStageHistory>();
+
+                // combine oppHistory and opportunity object
+                foreach (var rootObj in rootObjects.Where(r => r.Id == oppObj.Id))
+                {
+                    oppObj.StagesHistory.AddRange(rootObj.OpportunityHistories.records.Select(r => new OpportunityStageHistory()
+                    {
+                        OpportunityName = oppObj.Name,
+                        CreatedDate = r.CreatedDate,
+                        ToStage = r.StageName,                        
+                    }));
+                }                            
             }
+
 
             const string fieldsToObtain = "Id, Name, StageName, CreatedDate, OwnerId, CreatedById";
             var opportunities = GetObjectsByName("Opportunity", fieldsToObtain);            
-            dynamic oppHistory = Query<dynamic>("SELECT Id, (SELECT OpportunityId, CreatedDate, StageName FROM OpportunityHistories) FROM Opportunity");
+            var oppHistorories = Query<OpportunityHistoriesClass>("SELECT Id, (SELECT OpportunityId, CreatedDate, StageName FROM OpportunityHistories) FROM Opportunity");
 
 
             List<Opportunity> result = new List<Opportunity>();            
@@ -141,7 +154,7 @@ namespace Siemplify
 
                 OpportunityStageHistory history = new OpportunityStageHistory();
 
-                FillHistory(resultOppObj);
+                FillHistory(resultOppObj, oppHistorories);
 
                 result.Add(resultOppObj);
             }

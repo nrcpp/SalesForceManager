@@ -15,7 +15,8 @@ namespace Siemplify
         static string consumerKey = "<YOUR CONSUMER KEY>";     // NOTE: remove from public after replacing
         static string consumerSecret = "<YOUR CONSUMER SECRET>";     
         static string salesforceLogin = "<YOUR SALESFORCE LOGIN>";     
-        static string salesforcePassword = "<YOUR SALSEFORCE PASSWORD>";     
+        static string salesforcePassword = "<YOUR SALSEFORCE PASSWORD>";
+
 
         static void Main(string[] args)
         {
@@ -32,18 +33,59 @@ namespace Siemplify
             System.Net.ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
             forceManager.Connect();
 
-#if UNCOMMENT_TO_TEST_FETCH_OBJECTS
+            //
+            // Fetch Account objects with ALL fields
             var accounts = forceManager.GetObjectsByName("Account");
 
-            Console.WriteLine("First 10 Accounts:");
-            foreach (var a in accounts.Take(10))            
+            //Console.WriteLine("First 10 Accounts:");
+            foreach (var a in accounts)            
                 Console.WriteLine($"Id: {a.Id} - Name: {a.Name} - Description: {a.Description}");
 
-            var contacts = forceManager.GetObjectsByName("Contact");
-            foreach (var c in contacts.Take(10))
-                Console.WriteLine($"Id: {c.Id} - Name: {c.Name} - Title: {c.Title} - Phone: {c.Phone} - Email: {c.Email}");
-#endif
-            forceManager.GetOpportunitiesWithHistory();
+
+            Console.WriteLine("Press enter to read Contacts");  Console.ReadLine();
+
+            //
+            // Fetch Contact objects with ALL fields obtained before
+            string contactFields = forceManager.GetObjectFields("Contact");
+            var contacts = forceManager.GetObjectsByName("Contact", contactFields);
+
+            foreach (var c in contacts)        
+            {
+                Console.Write($"Id: {c.Id} - Name: {c.Name} - Title: {c.Title} - Phone: {c.Phone} - Email: {c.Email}");
+
+                try
+                {
+                    if (c.CustomField1__c != null || c.CustomField2__c != null)
+                        Console.Write($" - CustomField1: {c.CustomField1__c} - CustomField2 - {c.CustomField2__c}");
+                }
+                catch (Exception)
+                {
+                    Console.WriteLine("Custom fields not found");
+                }
+
+                Console.WriteLine();
+            }
+
+
+
+            //-------------------------------------------------
+            Console.WriteLine("Press enter to read Opportunity and History"); Console.ReadLine();
+
+            // Get opportunities object with history
+            var opps = forceManager.GetOpportunitiesWithHistory();
+
+            // output opportunity and history
+            Console.WriteLine("\r\nOPPORTUNITIES:");
+            foreach (var op in opps)
+            {
+                Console.WriteLine($"Name: {op.Name} - Stage: {op.Stage} - CreatedDate: {op.CreatedDate}\r\n\tStages History:");
+                foreach (var h in op.StagesHistory)
+                {
+                    Console.WriteLine($"\t\tOpportunityName: {h.OpportunityName} - Stage: {h.ToStage} - CreatedDate: {h.CreatedDate}");
+                }
+            }
+
+            Console.ReadLine();
         }
 
         private static void InitFromFile(string fileName)

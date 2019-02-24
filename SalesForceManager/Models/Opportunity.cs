@@ -16,7 +16,7 @@ namespace Siemplify
         public string BillingCountry { get; set; }
         public DateTime? CreatedDate { get; set; }
         public string Owner { get; set; }
-        public int FYCV { get; set; }
+        public int? FYCV { get; set; }
         public string CreatedBy { get; set; }
         public List<OpportunityStageHistory> StagesHistory { get; set; } = new List<OpportunityStageHistory>();
     }

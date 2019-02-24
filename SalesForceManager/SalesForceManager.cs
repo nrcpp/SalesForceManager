@@ -145,10 +145,10 @@ namespace Siemplify
                     Id = opp.Id,
                     Name = opp.Name,
                     Stage = opp.StageName,
-                    BillingCountry = null,              // TODO: NO data
+                    BillingCountry = opp.BillingCountry,              // TODO: NO data
                     CreatedDate = SafeParse((string)opp.CreatedDate),
                     Owner = opp.OwnerId,
-                    FYCV = 0,                           // TODO: NO data?
+                    FYCV = opp.FYCV,                           // TODO: NO data?
                     CreatedBy = opp.CreatedById,
                 };
 
